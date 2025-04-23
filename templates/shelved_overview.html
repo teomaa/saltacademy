@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script type="text/javascript" src="{{ url_for('static', filename = 'shelved_overview.js') }}"></script>
+<script>
+    let data = {{data|tojson}}
+</script>
+
+<div id="title_container"></div>
+<div id="shelf_container"></div>
+
+{% endblock %}
+
+
+
