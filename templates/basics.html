@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+  <h1 class="display-4 text-center mb-5">The Basics</h1>
+  <div class="row justify-content-center">
+    <!-- Types of Salt -->
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="/basics/types"
+         class="card h-100 text-center text-decoration-none">
+        <img src="{{ url_for('static', filename='images/types_of_salt.png') }}"
+             class="card-img-top p-3"
+             alt="Types of Salt">
+        <div class="card-body">
+          <h5 class="card-title">Types of Salt</h5>
+        </div>
+      </a>
+    </div>
+
+    <!-- Measuring Techniques -->
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="/basics/measure/1"
+         class="card h-100 text-center text-decoration-none">
+        <img src="{{ url_for('static', filename='images/measuring_techniques.png') }}"
+             class="card-img-top p-3"
+             alt="Measuring Techniques">
+        <div class="card-body">
+          <h5 class="card-title">Measuring Techniques</h5>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Continue button -->
+  <div class="text-center mt-4">
+    <a href="/meat" class="btn btn-primary btn-lg">Continue to Meat &amp; Fish</a>
+  </div>
+</div>
+{% endblock %}

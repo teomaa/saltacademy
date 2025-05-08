@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script type="text/javascript" src="{{ url_for('static', filename = 'hello_world.js') }}"></script>
+<script>
+
+</script>
+
+    <div class="d-flex align-items-center justify-content-center mt-navbar" >
+        <div class="grid">
+            <div class="col-12 ">
+                <img class="img-fluid w-25 mx-auto pb-4 d-block" src="{{ url_for('static', filename = 'images/home_graphic.png') }}" alt="TODO">
+            </div>
+
+            <h1 class="text-center col-12">Welcome to SaltAcademy!</h1>
+
+            <div class="text-center col-12 mx-auto w-75 text-darkgray">
+                Welcome to SaltAcademy, where you can become an expert at salting your food in just
+                10 minutes! We get it-salting food sounds boring. But it can make the difference between a chef-level meal and a
+                sad excuse for nutrition.
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 mt-4">
+              <a href="/basics" class="btn btn-primary">Learn the Basics</a>
+              <a href="/quiz" class="btn btn-secondary">Take the Quiz</a>
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+

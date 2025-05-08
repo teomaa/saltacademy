@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{#<div id="game-area" class="position-relative"#}
+{#     style="width:100%; height:700px;#}
+{#            background: url('{{ url_for('static', filename='images/kitchen_bg.png') }}')#}
+{#                        no-repeat center bottom;#}
+{#            background-size: cover;">#}
+{##}
+{#  <!-- Dim overlay (pointer-events: none so it doesn't block drags) -->#}
+{#  <div class="overlay position-absolute top-0 start-0 w-100 h-100"#}
+{#       style="background: rgba(0,0,0,0.5); pointer-events: none; z-index:1;"></div>#}
+{##}
+{#  <!-- STATE 1: empty pot draggable -->#}
+{#  <img id="pot_empty"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/pot_empty.png') }}"#}
+{#       style="top:140px; left:120px; width:80px; height:80px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 1: drop-target over the faucet in the background -->#}
+{#  <!-- After: transparent background + visible border -->#}
+{#<div id="faucet-target"#}
+{#     class="drop-target position-absolute d-none"#}
+{#     title="Drop the pot here to fill it"#}
+{#     style="top: 90px; left: 110px; width: 100px; height: 100px; z-index:2;">#}
+{#</div>#}
+{##}
+{#  <!-- STATE 1→2: filled pot draggable -->#}
+{#  <img id="pot_filled"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/pot_filled.png') }}"#}
+{#       style="top:140px; left:120px; width:80px; height:80px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 2: drop-target over the stove in the background -->#}
+{#  <!-- After: transparent background + visible border -->#}
+{#<div id="stove-target"#}
+{#     class="drop-target position-absolute d-none"#}
+{#     title="Drop the filled pot onto the stove"#}
+{#     style="top:100px; right:100px; width:100px; height:80px; z-index:2;">#}
+{#</div>#}
+{##}
+{#  <!-- STATE 3: water drop -->#}
+{#  <img id="water_drop"#}
+{#       class="drop-target position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/water_drop.png') }}"#}
+{#       style="top:200px; left:140px; width:50px; height:50px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 3 & 11: salt shaker -->#}
+{#  <img id="salt_shaker"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/salt_shaker.png') }}"#}
+{#       style="top:200px; left:200px; width:60px; height:60px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 4: potato -->#}
+{#  <img id="potato"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/potato.png') }}"#}
+{#       style="top:350px; left:140px; width:60px; height:60px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 5 & 8: cutting board -->#}
+{#  <img id="cutting_board"#}
+{#       class="drop-target position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/cutting_board.png') }}"#}
+{#       style="top:450px; left:280px; width:120px; height:80px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 5: tomato -->#}
+{#  <img id="tomato"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/tomato.png') }}"#}
+{#       style="top:350px; right:260px; width:60px; height:60px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 6 & 9: knife -->#}
+{#  <img id="knife"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/knife.png') }}"#}
+{#       style="top:500px; left:320px; width:60px; height:20px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 6: tomato sliced -->#}
+{#  <img id="tomato_sliced"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/tomato_sliced.png') }}"#}
+{#       style="top:350px; right:260px; width:60px; height:60px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 8: cucumber -->#}
+{#  <img id="cucumber"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/cucumber.png') }}"#}
+{#       style="top:350px; right:160px; width:60px; height:60px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 9: cucumber sliced -->#}
+{#  <img id="cucumber_sliced"#}
+{#       class="draggable position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/cucumber_sliced.png') }}"#}
+{#       style="top:350px; right:160px; width:60px; height:60px; z-index:2;" />#}
+{##}
+{#  <!-- STATE 10 & 11: bowl -->#}
+{#  <img id="bowl"#}
+{#       class="drop-target position-absolute d-none"#}
+{#       src="{{ url_for('static', filename='images/bowl.png') }}"#}
+{#       style="bottom:150px; left:50%; transform:translateX(-50%);#}
+{#              width:120px; height:80px; z-index:2;" />#}
+{##}
+{#  <!-- Salt prompt overlay -->#}
+{#  <div id="salt-prompt"#}
+{#       class="position-absolute d-none text-center"#}
+{#       style="top:300px; left:50%; transform:translateX(-50%);#}
+{#              background:#fff; padding:12px; border-radius:8px; z-index:3;">#}
+{#    <p id="salt-question" class="mb-2 text-dark"></p>#}
+{#    <button id="salt-pinch" class="btn btn-outline-primary me-2">#}
+{#      +1 Pinch#}
+{#    </button>#}
+{#    <button id="salt-handful" class="btn btn-outline-primary">#}
+{#      +1 Handful#}
+{#    </button>#}
+{#  </div>#}
+{##}
+{#  <!-- Done button -->#}
+{#  <button id="done-btn"#}
+{#          class="btn btn-success position-absolute d-none"#}
+{#          style="bottom:60px; left:50%; transform:translateX(-50%); z-index:2;">#}
+{#    Done#}
+{#  </button>#}
+{#</div>#}
+
+    <!-- in your Flask template -->
+<canvas id="gameCanvas" resize></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
+<script src="{{ url_for('static', filename='game.js') }}"></script>
+
+<style>
+  .draggable { touch-action: none; }
+  .drop-target {
+  /* semi-transparent fill so you can still see the background */
+  background-color: rgba(255, 255, 255, 0.1);
+  /* visible dashed outline */
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+}
+
+/* highlight on hover as before */
+.drop-hover {
+  background-color: rgba(144, 238, 144, 0.5) !important;
+  border-color: #8f8 !important;
+}
+  .ui-draggable-dragging { z-index: 3000 !important; }
+</style>
+
+<script src="{{ url_for('static', filename='game.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,33 @@
+.mt-navbar {
+  min-height: calc(100vh - 56px); /* Adjust if your navbar is taller */
+}
+
+body {
+font-family: "Alata", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.text-lightgray {
+    color: #D9D9D9;
+}
+
+.bg-lightgray {
+    background-color: #D9D9D9;
+}
+
+.text-darkgray {
+    color: #545454;
+}
+
+.bg-darkgray {
+    background-color: #545454;
+}
+
+.text-accent {
+    color: #8AA5FF;
+}
+
+.bg-accent {
+    background-color: #8AA5FF;
+}

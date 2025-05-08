@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <script src="{{ url_for('static', filename='quiz.js') }}"></script>
+  <script>
+    // Make the quiz data available to quiz.js
+    const quizData     = {{ quiz|tojson }};
+    const questionKeys = Object.keys(quizData).map(Number).sort();
+  </script>
+
+  <div class="container my-5">
+    <div id="quiz_container"></div>
+  </div>
+{% endblock %}
