@@ -348,7 +348,20 @@ quiz = {
                 "correct": False,
             }
         }
-    }
+    },
+    5: {
+            "id": 5,
+            "type": "multiple_choice",
+            "question": "You are preparing a beef steak with a side of mushrooms. How should you salt your two dishes "
+                        "to make both dishes taste their best?",
+            "answers": {
+                1: "Salt the mushrooms a few hours in advance, and salt the steak only once browned in the pan.",
+                2: "Salt the steak a few hours in advance, and salt the mushrooms only once browned in the pan.",
+                3: "Salt the steak ten minutes in advance, and salt the mushrooms only once browned in the pan.",
+                4: "Salt the mushrooms ten minutes in advance, and salt the steak only once browned in the pan.",
+            },
+            "correct_answer": 2
+        },
 }
 
 
