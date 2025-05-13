@@ -534,6 +534,7 @@ knifeRaster = loadItem(
     content: 'Congratulations — You made two amazing dishes!',
     justification: 'center',
     fontSize: 30,
+    fontFamily: 'Alata',
     fillColor: 'black'
   });
 

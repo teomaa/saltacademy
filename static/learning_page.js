@@ -57,7 +57,7 @@ displayTriText = function(desc) {
 
   // Left column (8/12)
   const $left = $('<div class="col-md-8">')
-    .append($('<h2 class="mb-4">').text(desc.title));
+    .append($('<h2 class="mb-4 text-black">').text(desc.title));
 
   ['area_1','area_2','area_3'].forEach((key, idx) => {
     const area    = desc[key];
@@ -120,7 +120,7 @@ displayAdvancableBigGraphic = function(desc) {
   const $header = $('<div class="row text-center mb-4">')
     .append(
       $('<div class="col">')
-        .append($('<h2>').text(desc.title))
+        .append($('<h2 class="text-black">').text(desc.title))
         .append($('<p>').text(desc.description))
     );
   $main.append($header);
