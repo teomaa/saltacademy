@@ -6,7 +6,7 @@ displayBigGraphic = function(desc, items) {
 
   // Left column: title, icons, description, back link
   const $left = $('<div class="col-md-6">')
-    .append($('<h2>').text(desc.title));
+    .append($('<h2 class="text-black">').text(desc.title));
 
   // Icons for each item
   const $iconRow = $('<div class="mb-3">');
@@ -48,20 +48,27 @@ displayBigGraphic = function(desc, items) {
 };
 
 // Renders the "tri_text" layout
+// Renders the "tri_text" layout as two columns:
+// left: stacked icon+text areas; right: main graphic
+// Renders the "tri_text" layout as two columns,
+// with alternating left/right alignment per text block.
 displayTriText = function(desc) {
   const $main = $('#main_container').empty();
 
-  // Title
-  $main.append($('<h2 class="mb-4">').text(desc.title));
+  // Left column (8/12)
+  const $left = $('<div class="col-md-8">')
+    .append($('<h2 class="mb-4">').text(desc.title));
 
-  // Three equal columns
-  const $triRow = $('<div class="row mb-4">');
-  ['area_1', 'area_2', 'area_3'].forEach(key => {
-    const area = desc[key];
-    const $col  = $('<div class="col-md-4 text-center">');
+  ['area_1','area_2','area_3'].forEach((key, idx) => {
+    const area    = desc[key];
+    const isRight = idx % 2 === 1;
 
-    // Icons
-    const $icons = $('<div class="mb-2">');
+    const $block = $('<div>')
+      .addClass('w-75 mb-5')
+      .addClass(isRight ? 'ms-auto text-end' : 'text-start');
+
+    const $icons = $('<div class="mb-2 d-flex">')
+      .addClass(isRight ? 'justify-content-end' : 'justify-content-start');
     area.icons.forEach(url => {
       $('<img>')
         .attr('src', '/static/images/' + url)
@@ -69,23 +76,41 @@ displayTriText = function(desc) {
         .css({ width: '32px', height: '32px' })
         .appendTo($icons);
     });
-    $col.append($icons);
 
-    // Text
-    $col.append($('<p>').text(area.description));
-
-    $triRow.append($col);
+    $block.append($icons)
+          .append($('<p>').text(area.description));
+    $left.append($block);
   });
-  $main.append($triRow);
 
-  // Back link
-  $main.append(
+  $left.append(
     $('<a>')
       .attr('href', desc.back_url)
       .addClass('btn btn-outline-secondary')
       .text('← Back')
   );
+
+  // Right column (4/12): use flex to vertically center; image fills width
+  const $right = $('<div class="col-md-4 d-flex align-items-center">')
+    .append(
+      $('<img>')
+        .attr('src', '/static/images/' + desc.main_graphic)
+        .attr('alt', desc.title)
+        .addClass('img-fluid rounded w-100')
+    );
+
+  // Row wrapper with vertical centering
+  $('<div class="row align-items-center">')
+    .append($left)
+    .append($right)
+    .appendTo($main);
 };
+
+
+
+
+
+
+
 
 // Renders the "advancable_big_graphic" layout with navigation arrows
 displayAdvancableBigGraphic = function(desc) {
@@ -157,7 +182,8 @@ displayAdvancableBigGraphic = function(desc) {
 displayPopoverInfo = function(desc, items) {
   const $main = $('#main_container').empty();
 
-  $('#main_container').append(`<h1>${item_description.page_title}</h1>`)
+  $('#main_container').append(`<h2 class="text-black">${item_description.page_title}</h2>`)
+  $('#main_container').append(`<p>${item_description.page_subtitle}</p>`)
 
   items.forEach(item => {
     // Determine correct image source

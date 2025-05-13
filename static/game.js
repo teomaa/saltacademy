@@ -1,6 +1,8 @@
 $(function() {
   // Install Paper.js and set up full-window canvas
   paper.install(window);
+  $('#quizSkipQuestionButton').removeClass('d-none');
+    $('#quizOverNextQuestionButton').addClass('d-none');
   const canvas = document.getElementById('gameCanvas');
   let currentBg = null;
 
@@ -24,6 +26,7 @@ $(function() {
   let potSalted     = false,
     bowlSalted    = false,
     congratsShown = false;
+  let dragEnabled = true;
 
   // Salt counts
   let handfulCount = 0, pinchCount = 0;
@@ -153,11 +156,14 @@ $(function() {
       this.scale(s);
       this.position = pos;
       this.bringToFront();
-      this.onMouseDrag = function(e) { this.position = this.position.add(e.delta); };
+      this.onMouseDrag = function(e) {
+        if (!dragEnabled) return;
+        this.position = this.position.add(e.delta);
+      }
       this.onMouseUp = function() {
         if (!potOnStove && this.bounds.intersects(stoveRegion)) {
           potOnStove = true;
-          stoveTarget.strokeColor = 'green';
+          // stoveTarget.strokeColor = 'green';
           swapBackground();
         }
       };
@@ -167,6 +173,7 @@ $(function() {
   // Prompt for pot salt
   function promptPotSalt() {
     handfulCount = pinchCount = 0;
+    dragEnabled = false;
     const pt = stoveRegion.topLeft;
     const modal = $('<div>').css({
       position: 'absolute',
@@ -215,6 +222,7 @@ $(function() {
   }
 
 setTimeout(() => {
+  dragEnabled = true;
   modal.remove();
   if (correctPot)    potSalted = true;
   if (potSalted && bowlSalted && potatoAdded && !congratsShown) {
@@ -229,6 +237,7 @@ setTimeout(() => {
   // Prompt for bowl salt
   function promptBowlSalt() {
     handfulCount = pinchCount = 0;
+    dragEnabled = false;
     const pt = bowlRegion.topLeft;
     const modal = $('<div>').css({
       position: 'absolute',
@@ -274,6 +283,7 @@ setTimeout(() => {
   // inside promptBowlSalt(), replace the setTimeout with:
 
 setTimeout(() => {
+  dragEnabled = true;
   modal.remove();
   if (correctBowl)  bowlSalted = true;
   if (potSalted && bowlSalted && potatoAdded && !congratsShown) {
@@ -291,7 +301,10 @@ setTimeout(() => {
       const sc = desiredItemWidth / this.width; this.scale(sc);
       this.position = new Point(x, y);
       this.bringToFront();
-      this.onMouseDrag = function(e) { this.position = this.position.add(e.delta); };
+      this.onMouseDrag = function(e) {
+        if (!dragEnabled) return;
+        this.position = this.position.add(e.delta);
+      }
       if (toFaucet) {
         this.onMouseUp = function() { if (this.bounds.intersects(faucetRegion)) startFilling(); };
       }
@@ -414,7 +427,10 @@ setTimeout(() => {
           this.scale(ss);
           this.position = boardRegion.center.clone();
           this.bringToFront();
-          this.onMouseDrag = function(e) { this.position = this.position.add(e.delta); };
+          this.onMouseDrag = function(e) {
+        if (!dragEnabled) return;
+        this.position = this.position.add(e.delta);
+      }
           this.onMouseUp = function() {
             if (this.bounds.intersects(bowlRegion)) {
               if (bowlState === 'empty') {
@@ -507,6 +523,8 @@ knifeRaster = loadItem(
   // knifeRaster = loadItem('static/images/knife.png', startX, startY + spacing * 5, false, function(item));
 
   function showCongrats() {
+    $('#quizSkipQuestionButton').addClass('d-none');
+    $('#quizOverNextQuestionButton').removeClass('d-none');
   // 1) clear everything
   project.activeLayer.removeChildren();
 
@@ -540,6 +558,8 @@ knifeRaster = loadItem(
       pLoaded = true;
       positionBoth();
     }
+
+
   });
 
   function positionBoth() {
@@ -555,7 +575,12 @@ knifeRaster = loadItem(
     );
     // ensure text is on top
     txt.bringToFront();
+    console.log( 'skip btn exists?', $('#quizSkipQuestionButton').length );
+console.log( 'next btn exists?', $('#quizOverNextQuestionButton').length );
+
   }
+
+
 }
 
 

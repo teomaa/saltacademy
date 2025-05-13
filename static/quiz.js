@@ -5,73 +5,104 @@ $(function() {
   const userResults = [];
 
   function render() {
-    const qId = questionKeys[currentIndex];
-    const q   = quizData[qId];
-    $('#quiz_container').empty();
+  // reset answered-flag whenever a new question shows up
+  $('#quiz_container')
+    .empty()
+    .data('answered', false);
 
-    // QUESTION TEXT
-    $('#quiz_container').append(
-      $('<h4>').text(`Q${currentIndex+1}. ${q.question}`)
-    );
+  const qId = questionKeys[currentIndex];
+  const q   = quizData[qId];
 
-    // DISPATCH BY TYPE
-    if (q.type === 'multiple_choice') return renderMC(q);
-    if (q.type === 'sort_into_categories') return renderSort(q);
-    if (q.type === 'put_in_order') return renderOrder(q);
-    if (q.type === 'choose_video') return renderVideo(q);
-  }
+  // QUESTION TEXT
+  $('#quiz_container').append(
+    $('<h4>').text(`Q${currentIndex+1}. ${q.question}`)
+  );
+
+  // DISPATCH BY TYPE
+  if (q.type === 'multiple_choice')          return renderMC(q);
+  if (q.type === 'sort_into_categories')     return renderSort(q);
+  if (q.type === 'put_in_order')             return renderOrder(q);
+  if (q.type === 'choose_video')             return renderVideo(q);
+  if (q.type === 'game')                     return renderGame(q);
+}
+
 
   // 1) Multiple Choice
-  function renderMC(q) {
-    const $form = $('<form>');
-    for (let a in q.answers) {
-      const $lbl = $('<label class="d-block">');
-      $('<input>')
-        .attr({ type: 'radio', name: 'answer', value: a })
-        .appendTo($lbl);
-      $lbl.append(` ${q.answers[a]}`);
-      $form.append($lbl);
+// 1) Multiple Choice
+function renderMC(q) {
+  // Clear out anything below the question
+  $('#quiz_container .mc-answers, #quiz_container .mc-submit').remove();
+
+  // Container for the answer buttons
+  const $ansWrapper = $('<div class="mc-answers mt-4">');
+
+  // Turn answers object into an array of [key, text]
+  const entries = Object.entries(q.answers);
+
+  // Process two answers per row
+  for (let i = 0; i < entries.length; i += 2) {
+    const $row = $('<div class="row mb-3">').appendTo($ansWrapper);
+
+    // For each half of the row (0 and 1)
+    for (let j = 0; j < 2; j++) {
+      const idx = i + j;
+      if (idx < entries.length) {
+        const [key, text] = entries[idx];
+        const $col = $('<div class="col-6 d-grid">').appendTo($row);
+
+        $('<button>')
+          .addClass('btn btn-secondary')
+          .text(text)
+          .data('answer', key)
+          .click(e => {
+            const chosen = parseInt($(e.currentTarget).data('answer'));
+            const ok     = chosen === q.correct_answer;
+            userResults.push({ id: q.id, correct: ok });
+            showFeedback(ok, q.answers[q.correct_answer]);
+          })
+          .appendTo($col);
+      } else {
+        // fill empty half if odd number of answers
+        $('<div class="col-6">').appendTo($row);
+      }
     }
-    $('<button class="btn btn-primary mt-3">Submit</button>')
-      .appendTo($form)
-      .click(e => {
-        e.preventDefault();
-        const chosen = parseInt($form.find('input[name=answer]:checked').val());
-        const ok     = chosen === q.correct_answer;
-        userResults.push({ id: q.id, correct: ok });
-        showFeedback(ok, q.answers[q.correct_answer]);
-      });
-    $('#quiz_container').append($form);
   }
+
+  // Attach them under the question
+  $('#quiz_container').append($ansWrapper);
+}
+
+
 
   // 2) Sort into categories
   // 2) Sort into categories
 function renderSort(q) {
   $('#quiz_container').empty();
 
-  // 1) Question text (if not already appended)
+  // 1) Question text
   $('#quiz_container').append(
     $('<h4>').text(`Q${currentIndex+1}. ${q.question}`)
   );
 
-  // 2) POOL of draggable options
+  // 2) POOL of draggable options, now alert-primary & shrink-wrapped
   const $pool = $('<div class="pool mb-4">');
   Object.entries(q.options).forEach(([o, opt]) => {
     $('<div>')
       .attr('id', `opt_${o}`)
-      .addClass('alert alert-secondary draggable')
+      .addClass('draggable alert alert-primary d-inline-block me-2 mb-2')
       .text(opt.text)
+      .css({ cursor: 'move' })
       .draggable({
         helper: 'clone',
         revert: 'invalid',
         start(e, ui) { ui.helper.css('opacity', 0.7); },
-        stop(e, ui) { ui.helper.css('opacity', 1); }
+        stop(e, ui)  { ui.helper.css('opacity', 1); }
       })
       .appendTo($pool);
   });
   $('#quiz_container').append($pool);
 
-  // 3) TARGET drop‐zones
+  // 3) TARGET drop-zones
   const $row = $('<div class="row mb-3">');
   Object.entries(q.targets).forEach(([t, label]) => {
     const $col = $('<div class="col-md-4 text-center">')
@@ -89,14 +120,18 @@ function renderSort(q) {
         accept: '.draggable',
         hoverClass: 'drop-hover',
         drop(event, ui) {
-          // Move the original into here
-          const $orig = ui.draggable;
-          const $moved = $orig.clone()
-            .removeClass('draggable')
-            .addClass('dropped')
-            .css({ cursor: 'default' });
+          // Clone and drop; keep the alert-primary styling
+          const $orig  = ui.draggable;
+          const $clone = $orig.clone()
+            .removeClass('draggable')      // no longer draggable
+            .addClass('dropped')           // mark as dropped
+            .css({
+              cursor: 'default',
+              display: 'block',
+              margin: '0.25rem auto'
+            });
           $orig.remove();
-          $(this).append($moved);
+          $(this).append($clone);
         }
       });
 
@@ -112,9 +147,10 @@ function renderSort(q) {
       e.preventDefault();
       let correct = 0, total = Object.keys(q.options).length;
       Object.entries(q.options).forEach(([o, opt]) => {
-        const tgt = opt.target.toString();
-        // Look for the moved clone in the correct drop-box
-        if ($(`.drop-box[data-target="${tgt}"] #opt_${o}`).length) {
+        if (
+          $(`.drop-box[data-target="${opt.target}"] #opt_${o}`)
+            .length
+        ) {
           correct++;
         }
       });
@@ -125,35 +161,95 @@ function renderSort(q) {
 
 
 
-  // 3) Put in order
-  function renderOrder(q) {
-    const $ol = $('<ol id="order_list" class="list-group mb-3">');
-    // shuffle for display
-    const keys = Object.keys(q.options).sort(() => 0.5 - Math.random());
-    keys.forEach(o => {
-      $('<li>')
-        .attr('id', 'opt_'+o)
-        .addClass('list-group-item')
-        .text(q.options[o].text)
-        .appendTo($ol);
-    });
-    $('#quiz_container').append($ol);
-    $ol.sortable().disableSelection();
 
-    $('<button class="btn btn-primary">Submit</button>')
-      .appendTo('#quiz_container')
-      .click(e => {
-        e.preventDefault();
-        const arr = $('#order_list').sortable('toArray');
-        let correct = 0;
-        arr.forEach((id, idx) => {
-          const key = id.replace('opt_','');
-          if (q.options[key].order === idx+1) correct++;
-        });
-        userResults.push({ id: q.id, correct, outOf: arr.length });
-        showFeedback(correct===arr.length, `${correct} / ${arr.length}`);
+
+  // 3) Put in order
+function renderOrder(q) {
+  $('#quiz_container').empty();
+
+  $('#quiz_container').append(
+    $('<h4>').text(`Q${currentIndex+1}. ${q.question}`)
+  );
+
+  // 1) Build the flex row: left label, sortable list, right label
+  const $row = $('<div class="row align-items-start mb-3">')
+    .append($('<div class="col-auto pe-3">').text(q.left_label));
+
+  const $middleCol = $('<div class="col">');
+  const $list = $('<div id="order_list" class="d-flex flex-grow-1">');
+
+  Object.keys(q.options)
+    .sort(() => 0.5 - Math.random())
+    .forEach(key => {
+      const opt = q.options[key];
+      const $wrapper = $('<div>')
+        .attr('id', 'opt_' + key)
+        .addClass('d-flex flex-column align-items-center me-3');
+
+      // grey box around the text
+      $('<div>')
+        .addClass('bg-light border rounded p-3 mb-1')
+        .text(opt.text)
+        .appendTo($wrapper);
+
+      // placeholder for explanation
+      $('<div>')
+        .addClass('explanation text-muted mt-1')
+        .appendTo($wrapper);
+
+      $list.append($wrapper);
+    });
+
+  $middleCol.append($list);
+  $row.append($middleCol)
+      .append($('<div class="col-auto ps-3">').text(q.right_label));
+
+  $('#quiz_container').append($row);
+
+  // 2) Make the WRAPPERS sortable along X
+  $list.sortable({
+    items: '> div',
+    axis: 'x',
+    containment: 'parent',
+    helper: 'clone',
+    scroll: false,
+    tolerance: 'pointer'
+  }).disableSelection();
+
+  // 3) Submit button + logic
+  $('<button class="btn btn-primary">Submit</button>')
+    .appendTo('#quiz_container')
+    .click(e => {
+      e.preventDefault();
+
+      const order = $list.sortable('toArray');
+      let correct = 0;
+
+      // color boxes & show explanations, count correct
+      order.forEach((id, idx) => {
+        const key    = id.replace('opt_','');
+        const opt    = q.options[key];
+        const isGood = (opt.order === idx + 1);
+        if (isGood) correct++;
+
+        const $wrapper = $('#' + id);
+        // color the grey box
+        $wrapper.find('.bg-light')
+          .addClass(isGood ? 'border-success' : 'border-danger');
+
+        // fill in explanation under the box
+        $wrapper.find('.explanation').text(opt.explanation);
       });
-  }
+
+      userResults.push({ id: q.id, correct, outOf: order.length });
+      showFeedback(correct === order.length, `${correct} / ${order.length}`);
+    });
+}
+
+
+
+
+
 
   // 4) Choose video
   function renderVideo(q) {
@@ -161,9 +257,10 @@ function renderSort(q) {
       const opt = q.options[o];
       // video element
       $('#quiz_container').append(
-        $('<video controls class="d-block mb-2">')
-          .attr('src', opt.video)
-          .css('width','100%')
+        $('<img>')
+          .attr('src', "/static/images/" + opt.video)
+          .attr('alt', opt.alt)
+          .css('width','50%')
       );
       // radio
       const $lbl = $('<label class="form-check">');
@@ -186,17 +283,26 @@ function renderSort(q) {
       });
   }
 
-  // FEEDBACK + NAVIGATION
-  function showFeedback(isCorrect, extra) {
-    $('#quiz_container').append(
-      $('<div class="mt-3">').html(
-        isCorrect
-          ? `<p class="text-success">Correct!</p>`
-          : `<p class="text-danger">Wrong. Answer: ${extra}</p>`
-      )
-    );
-    const nextLabel = currentIndex+1 < total ? 'Next Question' : 'See Results';
-    $('<button class="btn btn-secondary mt-2">')
+  // 4) Choose game
+  function renderGame(q) {
+      console.log("gsdifjsoidjiodjs")
+      $('<canvas id="gameCanvas" resize></canvas>').appendTo('#quiz_container')
+      // $('<script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>').appendTo('#quiz_container')
+      $('<script src="static/game.js"></script>').appendTo('#quiz_container')
+      $('<div id="nextButtonContainer"></div>').appendTo('#quiz_container')
+        // $('<button class="btn btn-secondary mt-3">Skip</button>')
+        //       .appendTo('#nextButtonContainer')
+        //       .click(e => {
+        //         e.preventDefault();
+        //         const chosen = parseInt($('input[name=video_choice]:checked').val());
+        //         const ok     = false;
+        //         userResults.push({ id: q.id, correct: ok });
+        //         const right = null;
+        //         showFeedback(ok, right);
+        //       });
+        //
+      let nextLabel = 'Skip';
+    $('<button id="quizSkipQuestionButton" class="btn btn-secondary mt-2">')
       .text(nextLabel)
       .click(() => {
         if (currentIndex+1 < total) {
@@ -206,8 +312,72 @@ function renderSort(q) {
           showResults();
         }
       })
-      .appendTo('#quiz_container');
+      .appendTo('#nextButtonContainer');
+     // $('#nextButtonContainer').empty();
+   nextLabel = currentIndex+1 < total ? 'Next Question' : 'See Results';
+    $('<button id="quizOverNextQuestionButton" class=" btn btn-primary mt-2">')
+      .text(nextLabel)
+      .click(() => {
+        if (currentIndex+1 < total) {
+          currentIndex++;
+          render();
+        } else {
+          showResults();
+        }
+      })
+      .appendTo('#nextButtonContainer');
+
+
+    // $('<button class="btn btn-primary mt-3">Submit</button>')
+    //   .appendTo('#quiz_container')
+    //   .click(e => {
+    //     e.preventDefault();
+    //     const chosen = parseInt($('input[name=video_choice]:checked').val());
+    //     const ok     = q.options[chosen].correct;
+    //     userResults.push({ id: q.id, correct: ok });
+    //     const right = Object.values(q.options).find(o=>o.correct).text;
+    //     showFeedback(ok, right);
+    //   });
   }
+
+  // FEEDBACK + NAVIGATION
+function showFeedback(isCorrect, extra) {
+  const $quiz = $('#quiz_container');
+
+  // if we've already shown feedback, bail out
+  if ($quiz.data('answered')) return;
+  $quiz.data('answered', true);
+
+  // disable _all_ buttons & inputs
+  $quiz.find('button, input').prop('disabled', true);
+
+  // if you use jQueryUI draggables & sortables, disable them too:
+  $quiz.find('.draggable').draggable('disable');
+  $quiz.find('#order_list').sortable('disable');
+
+  // now append the feedback + exactly one “Next” button
+  $quiz.append(
+    $('<div class="mt-3">').html(
+      isCorrect
+        ? `<p class="text-success">Correct!</p>`
+        : `<p class="text-danger">Wrong. Answer: ${extra}</p>`
+    )
+  );
+
+  const nextLabel = currentIndex+1 < total ? 'Next Question' : 'See Results';
+  $('<button class="btn btn-secondary mt-2">')
+    .text(nextLabel)
+    .click(() => {
+      if (currentIndex+1 < total) {
+        currentIndex++;
+        render();
+      } else {
+        showResults();
+      }
+    })
+    .appendTo($quiz);
+}
+
 
   function showResults() {
     $('#quiz_container').empty();

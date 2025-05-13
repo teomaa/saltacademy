@@ -6,38 +6,37 @@ types_of_salt = {
         "id": 1,
         "layout_type": "popover_info",
         "page_title": "Types of Salt",
+        "page_subtitle": "Hover over each type to learn more!",
         "title": "Table Salt",
-        "description": "Table salt is the finely ground, heavily processed salt you’ll find in most salt shakers. It usually contains additives like iodine (a nutrient) and anti-caking agents, which can lend a faint bitterness or metallic edge. Because it's so dense and uniform, it's easy to oversalt with.",
+        "description": "Table salt is the type of salt you’ll find in most salt shakers. It is the most common type of "
+                       "salt, and is very fine, which makes the same amount of table salt taste much saltier that others, "
+                       "like Kosher Salt.",
         "img": "table_salt.png",
-        "prev_id": None,
-        "next_id": "/types/2",
         "back_url": "/basics",
-        # Direct link for search/navigation
-        "url": "/types/1",
     },
     2: {
         "id": 2,
         "layout_type": "popover_info",
         "page_title": "Types of Salt",
+        "page_subtitle": "Hover over each type to learn more!",
         "title": "Kosher Salt",
-        "description": "Kosher salt is the kitchen staple. Its large, pure crystals stick well to food and dissolve easily, perfect for seasoning meat, veggies, or pasta water. Less salty by volume than table salt, it gives you more control—taste as you go.",
+        "description": "Kosher salt is a staple in many professional kitchens, a title it holds for a reason. Its large,"
+                       " pure crystals stick well to food and dissolve easily, making it perfect for almost all kitchen "
+                       "applications. By volume, it is only around a third as salty as table salt, so be more generous in"
+                       "your use that you are with table salt.",
         "img": "kosher_salt.png",
-        "prev_id": "/types/1",
-        "next_id": "/types/3",
         "back_url": "/basics",
-        "url": "/types/2",
     },
     3: {
         "id": 3,
         "layout_type": "popover_info",
         "page_title": "Types of Salt",
+        "page_subtitle": "Hover over each type to learn more!",
         "title": "Maldon Salt",
-        "description": "Maldon is a flaky sea salt for finishing, not cooking. Its light, crunchy texture adds sparkle and contrast—great on salads, roasted veggies, or even chocolate. Think of it as edible glitter for your food.",
+        "description": "Maldon is a flaky sea salt best for finishing, not cooking. Its light, crunchy texture adds "
+                       "sparkle and contrast—great on salads, roasted veggies, or even chocolate.",
         "img": "maldon_salt.png",
-        "prev_id": "/types/2",
-        "next_id": None,
         "back_url": "/basics",
-        "url": "/types/3",
     }
 }
 
@@ -48,7 +47,7 @@ measuring_techniques = {
         # "page_title": "Types of Salt",
         "title": "The Palmful",
         "description": "The handful is a bold scoop, used when salting big pots of water or large batches of food. It’s about trusting your senses—more feel than measure.",
-        "img": "esnupi.gif",
+        "img": "palmful.gif",
         "prev_id": None,
         "next_id": "measure/2",
         "back_url": "/basics",
@@ -61,7 +60,7 @@ measuring_techniques = {
         # "page_title": "Types of Salt",
         "title": "The Wrist Wag",
         "description": "The wrist wag is a quick side-to-side flick used to evenly shower salt over food. It’s ideal for seasoning large surfaces, like roasting pans or steaks, from a few inches above.",
-        "img": "esnupi.gif",
+        "img": "wrist_wag_right.gif",
         "prev_id": "measure/1",
         "next_id": "measure/3",
         "back_url": "/basics",
@@ -73,7 +72,7 @@ measuring_techniques = {
         # "page_title": "Types of Salt",
         "title": "The Pinch",
         "description": "The pinch uses your thumb, index, and middle fingers to grab a small, controlled amount of salt. It’s perfect for tasting and adjusting during cooking or adding a touch to small portions.",
-        "img": "esnupi.gif",
+        "img": "pinch.gif",
         "prev_id": "measure/2",
         "next_id": None,
         "back_url": "/basics",
@@ -152,9 +151,21 @@ vegetable_descriptions = {
         "id": 3,
         "layout_type": "tri_text",
         "title": "Potatoes and other Veggies",
-        "area_1": {"description": "Potatoes and most other veggies contain pectin, and can be softened by breaking that pectin down. This happens when heated, and is aided by salt. ", "icons": ["potato.png","carrot.png"]},
-        "area_2": {"description": "When cooked in water, veggies should be treated like anything else cooked in water. ", "icons": ["boiling_pot.png"]},
-        "area_3": {"description": "When fried or cooked in any other way, most veggies should be salted at any time before cooking. When in doubt, salt ahead!", "icons": ["oven.png","frying_pan.png"]},
+        "area_1": {
+            "description": "Potatoes and most other veggies contain pectin, and can be softened by breaking that pectin down. This happens when heated, and is aided by salt. ",
+            "icons": ["potato.png","carrot.png"]
+        },
+        "area_2": {
+            "description": "When cooked in water, salt heavily. You need a lot more salt for water than when salting "
+                           "food directly. Depending on the volume of water, you should use a few handfuls, not pinches, "
+                           "of salt.",
+            "icons": ["boiling_pot.png"]
+        },
+        "area_3": {
+            "description": "When fried or cooked in any other way, most veggies should be salted at any time before cooking. When in doubt, salt ahead!",
+            "icons": ["oven.png","frying_pan.png"]
+        },
+        "main_graphic": "potato_graphic.gif",
         "back_url": "/vegetables",
         "url": "/vegetables/3",
     }
@@ -308,26 +319,33 @@ quiz = {
     3: {
         "id": 3,
         "type": "put_in_order",
+        "left_label": "Furthest in advance",
+        "right_label": "Least in advance",
         "question": "Put these items in order of how far in advance they should be salted.",
         "options": {
             1: {
                 "text": "Shrimp",
+                "explanation": "right before cooking",
                 "order": 5
             },
             2: {
                 "text": "Chicken breast",
+                "explanation": "at least 2 hours",
                 "order": 2
             },
             3: {
                 "text": "Whole turkey",
+                "explanation": "at least 8 hours",
                 "order": 1
             },
             4: {
                 "text": "Cucumbers",
+                "explanation": "around 5 minutes",
                 "order": 4
             },
             5: {
                 "text": "Salmon",
+                "explanation": "15-30 minutes",
                 "order": 3
             },
         }
@@ -335,16 +353,18 @@ quiz = {
     4: {
         "id": 4,
         "type": "choose_video",
-        "question": "Which of the following videos shows better technique?",
+        "question": "Which of the following GIFs shows better technique?",
         "options": {
             1: {
                 "text": "Video A",
-                "video": "url",
+                "video": "wrist_wag_right.gif",
+                "alt": "A video of someone salting food",
                 "correct": True,
             },
             2: {
                 "text": "Video B",
-                "video": "url",
+                "video": "wrist_wag_wrong.gif",
+                "alt": "A video of someone salting food",
                 "correct": False,
             }
         }
@@ -362,6 +382,11 @@ quiz = {
             },
             "correct_answer": 2
         },
+    6: {
+        "id": 6,
+        "type": "game",
+        "question": "Let's cook! You'll boil a potato and make a tomato cucumber salad. Take special care to properly salt them!"
+    }
 }
 
 

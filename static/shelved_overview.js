@@ -17,14 +17,14 @@ $(function() {
   // Prepare shelf canvas container
   const $container = $('#shelf_container').empty();
   const containerWidth = $container.width();
-  const containerHeight = $(window).height() * 0.8;
+  const containerHeight = $(window).height() * 0.7;
   const $canvas = $('<canvas>')
     .attr({ id: 'shelfCanvas', width: containerWidth, height: containerHeight })
     .css({ display: 'block', margin: '0 auto' });
   $container.append($canvas);
 
   // Tighten title spacing
-  $('#title_container h1').css({ 'margin-top': '0', 'margin-bottom': '10px' });
+  $('#title_container h1').css({ 'margin-top': '0', 'margin-bottom': '0px' });
 
   // Initialize Paper.js
   paper.install(window);
@@ -36,12 +36,12 @@ $(function() {
   const shelves = [ itemsArray.slice(0, midpoint), itemsArray.slice(midpoint) ];
 
   // Shelf geometry
-  const shelfWidth = containerWidth * 0.98;      // nearly full width
-  const shelfDepth = containerWidth * 0.05;      // perspective depth
+  const shelfWidth = containerWidth * 0.75;      // nearly full width
+  const shelfDepth = shelfWidth * 0.04;      // perspective depth
   const shelfThickness = 15;                     // front face height
   const shelfX = (containerWidth - shelfWidth) / 2;
-  const shelfY1 = containerHeight * 0.35;
-  const shelfY2 = containerHeight * 0.7;
+  const shelfY1 = containerHeight * 0.4;
+  const shelfY2 = containerHeight * 0.8;
 
   // Draw fully 3D shelves
   [shelfY1, shelfY2].forEach(baseY => {
